@@ -1,17 +1,24 @@
-'''
-script que permite habilitar a los usuarios que se encuentren pendientes en el sistema.
-
-1. Busca los clientes pendientes
-2. Para cada cliente crea una copia del esquema de base de datos original
-3. Para cada cliente creamos el directorio correspondiente, junto con los archivos de informacion y acceso a las bases de datos
-5. Para cada cliente, se efectuan las pruebas correspondientes de acceso a la base de datos y si todo esta OK se habilita en el sistema
-
-# NOTE: este script debe ejecutarse de manera automatica mediante un CRON
-'''
-
+# -*- coding: utf-8 -*-
+import smtplib
 import ConnectDataBase
 import HandlerQuery
 import os
+
+def sendEmail(nameUser, nameAdmin, email):
+
+    msg = "Estimado %s<br> Su cuenta ha sido activada de manera satisfactoria, para acceder a ella favor ingresar a http://toexpress.cl junto con los datos de acceso:<br> User: %s<br> Password: %s<br>Ante cualquier inconvenite favor notificar al administrador del sistema.<br> Saludos cordiales <br>Equipo TOExpress"
+    remitente = "Desarrollo <contactoogazexpress@gmail.com>"
+    destinatario = "%s <%s>" % (nameAdmin, email)
+    email = "From: %s\nTo: %s\nMIME-Version: 1.0\nContent-type: text/html\nSubject: %s\n%s" % (remitente, destinatario, "Notificacion Servicios TOExpress", msg)
+    try:
+        smtp = smtplib.SMTP('localhost')
+        smtp.sendmail(remitente, destinatario, email)
+        print "BIEN"
+    except:
+        print "ERROR"
+        print """Error: el mensaje no pudo enviarse.
+        Compruebe que sendmail se encuentra instalado en su sistema"""
+        pass
 
 #hacemos la consulta de los estados de los clientes
 connect = ConnectDataBase.ConnectDataBase()
@@ -19,7 +26,7 @@ connect.initConnectionDB()#establecemos la conexion
 
 handler = HandlerQuery.HandlerQuery()
 
-query = "select nameDataBase, idadministrador, nameUser from administrador where statusClient = 'PENDIENTE'"
+query = "select nameDataBase, idadministrador, nameUser, nombreAdmin, correoContacto from administrador where statusClient = 'PENDIENTE'"
 
 listClientPending = handler.queryBasicDataBase(query, connect)
 
@@ -29,6 +36,8 @@ for element in listClientPending:
     nameDataBase = element[0]
     idadministrador = element[1]
     nameUser = element[2]
+    nombreAdmin = element[3]
+    correoContacto = element[4]
 
     query = "create database %s" % nameDataBase
     handler.insertToTable(query, connect)
@@ -49,3 +58,10 @@ for element in listClientPending:
     fileWrite.write("$secret = 'c85ae6f5bbf337301e33bb5ee0d13f9a7a3e2148';\n")
     fileWrite.write(">?")
     fileWrite.close()
+
+    #hacemos la notificacion via correo electronico
+    sendEmail(nameUser, nombreAdmin, correoContacto)
+
+    #hacemos el cambio de estado del cliente
+    query = "update administrador set administrador.statusClient='ACTIVO' where administrador.idadministrador = %s" % idadministrador
+    handler.insertToTable(query, connect)
