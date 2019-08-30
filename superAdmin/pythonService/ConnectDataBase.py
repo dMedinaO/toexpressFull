@@ -17,7 +17,8 @@ class ConnectDataBase(object):
 		#create dictionary for add information of connection
 		dictionary_keys = {}
 		dictionary_keys['user'] = "root"
-		dictionary_keys['password'] = "desarrollo.toexpress.2019"
+		#dictionary_keys['password'] = "desarrollo.toexpress.2019"
+		dictionary_keys['password'] = "123ewq"
 		dictionary_keys['host'] = "localhost"
 		dictionary_keys['database'] = "superAdminDB"
 		dictionary_keys['raise_on_warnings'] = True
