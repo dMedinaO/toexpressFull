@@ -43,19 +43,22 @@ $(window).on('load', function() {
 						{"data":"empresa"},
 						{"data":"correoContacto"},
 						{"data":"telefonoContacto"},
-						{"data":"nameUser"},
-						{"data":"password"},
-						{"data":"nameDataBase"},
 						{"data":"statusClient"},
 						{"data":"createData"},
-						{"data":"modifiedData"},
-						{"defaultContent": "<button type='button' class='editar btn btn-primary' data-toggle='modal' data-target='#myModalEditar'><i class='fa fa-pencil-square-o'></i></button>	<button type='button' class='eliminar btn btn-danger' data-toggle='modal' data-target='#modalEliminar' ><i class='fa fa-trash-o'></i></button>"}
+						{"defaultContent": "<button type='button' class='detail btn btn-primary'><i class='fa fa-cogs'></i></button>"}
 					]
 	    });
 	    $('#demo-custom-toolbar2').appendTo($("div.newtoolbar"));
 
-		obtener_id_eliminar("#bodegaData tbody", t);
-		obtener_data_editar("#bodegaData tbody", t);
+		view_detail("#bodegaData tbody", t);		
+	}
+
+	var view_detail = function(tbody, table){
+		$(tbody).on("click", "button.detail", function(){
+			var data = table.row( $(this).parents("tr") ).data();
+			var iduser = data.idadministrador;
+			location.href="view_detail.php?administrador="+iduser;
+		});
 	}
 
 	var obtener_id_eliminar = function(tbody, table){

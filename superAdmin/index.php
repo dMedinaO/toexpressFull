@@ -193,12 +193,8 @@
                               <th class="min-tablet">Empresa</th>
                               <th class="min-tablet">Correo</th>
                               <th class="min-tablet">Teléfono</th>
-                              <th class="min-tablet">UserName</th>
-                              <th class="min-tablet">Password</th>
-                              <th class="min-tablet">DataBase</th>
                               <th class="min-tablet">Estado</th>
                               <th class="min-tablet">Created</th>
-                              <th class="min-tablet">Modified</th>
                               <th class="min-tablet">Opciones</th>
                               </tr>
                             </thead>
